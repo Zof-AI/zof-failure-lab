@@ -3,7 +3,7 @@ import { listScenarios, runScenario, runAll } from './index.js';
 try{
  const [command,id='all',...extra]=process.argv.slice(2);if(extra.length)throw new Error('usage');
  if(command==='--help')console.log('Usage: zof-failure-lab start | list | reproduce [id|all] | verify [id|all] | cleanup\nNo services, credentials, persistent files or network access.');
- else if(command==='--version')console.log('0.1.0');
+ else if(command==='--version')console.log('0.1.1');
  else if(command==='start'||command==='cleanup')console.log(JSON.stringify({state:command==='start'?'ready':'clean',persistentResources:0,services:0}));
  else if(command==='list')console.log(JSON.stringify(listScenarios(),null,2));
  else if(command==='reproduce'||command==='verify'){
