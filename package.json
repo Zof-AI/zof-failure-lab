@@ -22,7 +22,9 @@
     "docs",
     "examples",
     "scenarios",
-    "Dockerfile"
+    "Dockerfile",
+    "SECURITY.md",
+    "CONTRIBUTING.md"
   ],
   "engines": {
     "node": ">=22"
