@@ -1,5 +1,5 @@
 {
-  "name": "@zofai/failure-lab",
+  "name": "@zof-ai/failure-lab",
   "version": "0.1.0",
   "description": "Ten reproducible synthetic software failure scenarios and fixes",
   "type": "module",
