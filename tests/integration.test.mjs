@@ -1,0 +1,2 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {runAll} from '../dist/index.js';
+test('all scenarios leave state isolated across repeated runs',async()=>{const a=await runAll('broken'),b=await runAll('fixed'),c=await runAll('fixed');assert.equal(a.filter(r=>r.defectReproduced).length,10);assert.equal(b.filter(r=>r.regressionPassed).length,10);assert.deepEqual(b.map(r=>r.observed),c.map(r=>r.observed));});

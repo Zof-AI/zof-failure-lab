@@ -1,0 +1,3 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {spawnSync} from 'node:child_process';
+for(const command of ['start','reproduce','verify','cleanup'])test(`CLI ${command} lifecycle`,()=>{const r=spawnSync(process.execPath,['dist/cli.js',command],{encoding:'utf8',timeout:10000,maxBuffer:1e6});assert.equal(r.status,0,r.stderr);const x=JSON.parse(r.stdout);if(x.results)assert.equal(x.results.length,10);else assert.equal(x.persistentResources,0);});
+test('CLI rejected command does not leak arguments',()=>{const r=spawnSync(process.execPath,['dist/cli.js','run','token=private'],{encoding:'utf8'});assert.equal(r.status,2);assert.doesNotMatch(r.stderr,/private/);});

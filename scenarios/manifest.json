@@ -1,0 +1,97 @@
+{
+  "version": "1.0.0",
+  "scenarios": [
+    {
+      "id": "duplicate-payment",
+      "category": "Idempotency",
+      "problem": "A lost response causes the caller to retry a completed payment.",
+      "mitigation": "Use a durable idempotency key for the original payment intent.",
+      "expected": {
+        "charges": 1
+      }
+    },
+    {
+      "id": "inventory-race",
+      "category": "Concurrency",
+      "problem": "Two buyers read the same available stock before either update commits.",
+      "mitigation": "Reserve stock atomically instead of reading and updating across an await.",
+      "expected": {
+        "stock": 1,
+        "sold": 4
+      }
+    },
+    {
+      "id": "partial-transaction",
+      "category": "Error handling",
+      "problem": "An injected exception occurs after a debit and before the matching credit in SQLite.",
+      "mitigation": "Wrap both writes in a transaction and roll back on failure.",
+      "expected": {
+        "total": 150
+      }
+    },
+    {
+      "id": "unsafe-timeout-retry",
+      "category": "Retry safety",
+      "problem": "The server commits an order, but a timeout hides its response from the caller.",
+      "mitigation": "Reuse an operation identifier across retries and return the stored response.",
+      "expected": {
+        "orders": 1
+      }
+    },
+    {
+      "id": "message-idempotency",
+      "category": "Idempotency",
+      "problem": "The message broker redelivers an acknowledged message after a lost acknowledgement.",
+      "mitigation": "Track processed message identifiers with the state update.",
+      "expected": {
+        "credits": 10
+      }
+    },
+    {
+      "id": "cache-inconsistency",
+      "category": "Data consistency",
+      "problem": "A successful database update leaves a stale cached representation.",
+      "mitigation": "Invalidate cached values after committed writes.",
+      "expected": {
+        "visible": 2
+      }
+    },
+    {
+      "id": "expired-auth-token",
+      "category": "Authentication behavior",
+      "problem": "An access token expires between stages of a multi-step workflow.",
+      "mitigation": "Refresh an expired token once, then resume the idempotent stage.",
+      "expected": {
+        "completed": 3,
+        "refreshes": 1
+      }
+    },
+    {
+      "id": "breaking-api-response",
+      "category": "API compatibility",
+      "problem": "A renamed response property breaks a client using the documented field.",
+      "mitigation": "Retain the public property through an additive compatibility period.",
+      "expected": {
+        "greeting": "Hello Ada"
+      }
+    },
+    {
+      "id": "breaking-migration",
+      "category": "Database migrations",
+      "problem": "A SQLite migration removes the column still queried by the application.",
+      "mitigation": "Use expand-and-contract migration with compatible readers before removing old fields.",
+      "expected": {
+        "name": "Ada"
+      }
+    },
+    {
+      "id": "duplicate-background-job",
+      "category": "Regression prevention",
+      "problem": "Two scheduled workers execute the same logical job after a scheduling retry.",
+      "mitigation": "Use a unique job identifier and an atomic execution claim.",
+      "expected": {
+        "deliveries": 1
+      }
+    }
+  ]
+}

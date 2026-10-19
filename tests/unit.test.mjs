@@ -1,0 +1,5 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {listScenarios,runScenario} from '../dist/index.js';
+test('ten distinct scenarios cover requested failures',()=>{assert.equal(listScenarios().length,10);assert.equal(new Set(listScenarios().map(s=>s.id)).size,10);});
+for(const s of listScenarios())test(`${s.id}: reproduces injected defect and fixes regression`,async()=>{const bad=await runScenario(s.id,'broken');const good=await runScenario(s.id,'fixed');assert.equal(bad.defectReproduced,true);assert.notDeepEqual(bad.observed,s.expected);assert.equal(good.regressionPassed,true);assert.deepEqual(good.observed,s.expected);});
+test('scenario selection prevents traversal and arbitrary import',async()=>{for(const id of ['../private','file:///etc/passwd','https://example.invalid/x','constructor'])await assert.rejects(runScenario(id,'broken'),/Unsupported/);await assert.rejects(runScenario('inventory-race','unknown'),/Unsupported/);});
+test('returned metadata cannot mutate allowed scenarios',()=>{const x=listScenarios();x[0].id='changed';assert.equal(listScenarios()[0].id,'duplicate-payment');});

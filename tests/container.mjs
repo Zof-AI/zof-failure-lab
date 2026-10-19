@@ -1,0 +1,4 @@
+import {spawnSync} from 'node:child_process';import assert from 'node:assert/strict';
+const run=(args)=>{const r=spawnSync('docker',args,{encoding:'utf8',timeout:60000,maxBuffer:1e6});assert.equal(r.status,0,'Container command failed.');return r.stdout;};
+const image='zof-failure-lab:acceptance';
+try{run(['build','--network=none','--pull=false','-t',image,'.']);for(const command of ['reproduce','verify']){const result=JSON.parse(run(['run','--rm','--network=none','--read-only','--cap-drop=ALL','--security-opt=no-new-privileges','--pids-limit=64','--memory=128m','--cpus=0.5',image,command,'all']));assert.equal(result.results.length,10);assert.ok(result.results.every(r=>command==='reproduce'?r.defectReproduced:r.regressionPassed));}console.log(JSON.stringify({containerAcceptance:'passed',scenarios:10,branches:20}));}finally{run(['image','rm',image]);}
